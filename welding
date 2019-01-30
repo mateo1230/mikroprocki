@@ -1,21 +1,26 @@
 //  MSP430G
-// program do realizacji timera z bitem diagnostycznym do realizacji zamiennika timera w maszynie do zgrzewania ultradzwiekowego
-//pracującego jako watchdog timer systemu grzałek oporowych tejze maszyny
+// program do realizacji timera z bitem diagnostycznym do realizacji zamiennika timera w maszynie do procesu zgrzewania
+// uC pracujący jako watchdog timer systemu grzałek wstepnego ogrzewania oporowego
+// do użytku wewnetrznego w zakladzie produkcyjnym sektora motoryzacyjnego
+// PORT P1.0 jest portem realizacji sygnalu czasowych zalaczen
+// PORT P1.1 jest portem realizacji bloku sprawdzajacego linie komunikacyjna, czy w opszarze przewodu komunikacyjnego nie doszlo po zwarc
 
 #include <msp430.h>
 
 int main(void)
 {
-  WDTCTL = WDTPW + WDTHOLD;                 // Stop watchdog timer
-  P1DIR |= 0x01;                            // Set P1.0 to output direction
+  WDTCTL = WDTPW + WDTHOLD;                 // Zatrzymanie funkcji watschdoga uC
+  P1DIR |= 0x01;                            // Ustawienie P1.0 jako wyjścia
+  P1DIR |= 0x02;                            // Ustawienie P1.1 jako wyjścia
 
-  for (;;)
+  for (;;)                                  // Realizacja niskonczonej petli wykonywania programu
   {
-    volatile unsigned int i;
+    volatile unsigned int i;                // Wywolanie zmiennej typu unsigned intiger (calkowite bez znakow)
 
-    P1OUT ^= 0x01;                          // Toggle P1.0 using exclusive-OR
-
-    i = 50000;                              // Delay
+    P1OUT ^= 0x01;                          // Zalaczenie P1.0
+    P1OUT ^= 0x02;                          // Zalaczenie P1.2
+    
+    i = 6000;                              // Realizacja opoznienia czasowego
     do (i--);
     while (i != 0);
   }
