@@ -1,0 +1,20 @@
+// na lekcji technik mikroprocesorowych omawiany byl generator fukcnji PWM, ponizej znajduje sie kod programu
+// w dobie dzisiejszej technologi metoda PWM jest niezwykle istotna do realizacji zadan sterowania.
+// dzieki metodie PWM mozna z zwyklego wyjscia cyfrowego utworzycz wyjscie analogowe sterujac szerokoscia impulsu wlacz/wylacz
+// sterowaniee szerokoscia impulsu w zadanym okresie odpowiada wartosci sredniej danego przebiegu (wartosc srednia moze byc traktowana jako wartosc analogowa)
+#include <msp430.h>
+
+int main(void)
+{
+  WDTCTL = WDTPW + WDTHOLD;                // wylaczenie watschdoga
+  PIDIR |=BIT2;                            // Ustawienie portu 1.2 (OR - wlacz)
+  P1SEL |=BIT2;                            // P1SEL = 1
+  P1SEL2 =0;                               // p2sel = 0 wlaczenie PWM
+  CCR0 = 512-1;                            // PWM okres/rejestr konfiguracyjny licznika
+  CCTL1 = OUTMOD_7;                        // CCR1 reset/set
+  CCR1 = 384;                              // CCR1 PWM wypelnienie sygnalu
+  TACTL = TASSEL_2+ MC_1;                  // SMCLK, up mode
+    __bis_SR_register(LPM3_bits);          // Enter LPM3
+}
+ 
+
